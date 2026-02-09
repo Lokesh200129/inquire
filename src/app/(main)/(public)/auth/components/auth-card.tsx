@@ -11,8 +11,8 @@ import { useRouter } from "next/navigation";
 interface authProp {
     mode: 'login' | 'signup';
     authAction: any;
-    loading: boolean;
-    error: string;
+    loading?: boolean;
+    error?: string;
 }
 
 export default function AuthCard({ mode, authAction, loading, error }: authProp) {

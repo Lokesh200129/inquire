@@ -6,7 +6,7 @@ import { useUserStore } from "@/store/useUserStore";
 import { useRouter } from "next/navigation";
 
 const LoginPage = () => {
-    const { login, loading, error } = useAuth();
+    const { login } = useAuth();
     const router = useRouter();
     const isAuthenticated = useUserStore((state) => state.isAuthenticated)
 
@@ -21,8 +21,6 @@ const LoginPage = () => {
             <AuthCard
                 mode='login'
                 authAction={login}
-                loading={loading}
-                error={error}
             />
         </div>
     );

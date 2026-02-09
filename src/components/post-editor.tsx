@@ -40,45 +40,40 @@ export const PostEditor = ({ value, onChange, placeholder, className, isTitle }:
 
     return (
         <div className="relative w-full">
-            {/* 1. Bubble Menu - Appears when text is selected */}
-            <BubbleMenu editor={editor} tippyOptions={{ duration: 100 }}>
-                <div className="flex items-center gap-1 bg-popover border rounded-lg shadow-md p-1">
-                    <button
-                        type="button"
-                        onClick={() => editor.chain().focus().toggleBold().run()}
-                        className={`p-1.5 rounded hover:bg-accent ${editor.isActive("bold") ? "text-primary bg-accent" : ""}`}
-                    >
-                        <Bold className="h-4 w-4" />
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => editor.chain().focus().toggleItalic().run()}
-                        className={`p-1.5 rounded hover:bg-accent ${editor.isActive("italic") ? "text-primary bg-accent" : ""}`}
-                    >
-                        <Italic className="h-4 w-4" />
-                    </button>
-                    {!isTitle && (
-                        <>
-                            <button
-                                type="button"
-                                onClick={() => editor.chain().focus().toggleBulletList().run()}
-                                className={`p-1.5 rounded hover:bg-accent ${editor.isActive("bulletList") ? "text-primary bg-accent" : ""}`}
-                            >
-                                <List className="h-4 w-4" />
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => editor.chain().focus().toggleBlockquote().run()}
-                                className={`p-1.5 rounded hover:bg-accent ${editor.isActive("blockquote") ? "text-primary bg-accent" : ""}`}
-                            >
-                                <Quote className="h-4 w-4" />
-                            </button>
-                        </>
-                    )}
-                </div>
-            </BubbleMenu>
-
-            <EditorContent editor={editor} />
+            <div className="flex items-center gap-1 bg-popover border rounded-lg shadow-md p-1">
+                <button
+                    type="button"
+                    onClick={() => editor.chain().focus().toggleBold().run()}
+                    className={`p-1.5 rounded hover:bg-accent ${editor.isActive("bold") ? "text-primary bg-accent" : ""}`}
+                >
+                    <Bold className="h-4 w-4" />
+                </button>
+                <button
+                    type="button"
+                    onClick={() => editor.chain().focus().toggleItalic().run()}
+                    className={`p-1.5 rounded hover:bg-accent ${editor.isActive("italic") ? "text-primary bg-accent" : ""}`}
+                >
+                    <Italic className="h-4 w-4" />
+                </button>
+                {!isTitle && (
+                    <>
+                        <button
+                            type="button"
+                            onClick={() => editor.chain().focus().toggleBulletList().run()}
+                            className={`p-1.5 rounded hover:bg-accent ${editor.isActive("bulletList") ? "text-primary bg-accent" : ""}`}
+                        >
+                            <List className="h-4 w-4" />
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => editor.chain().focus().toggleBlockquote().run()}
+                            className={`p-1.5 rounded hover:bg-accent ${editor.isActive("blockquote") ? "text-primary bg-accent" : ""}`}
+                        >
+                            <Quote className="h-4 w-4" />
+                        </button>
+                    </>
+                )}
+            </div>
         </div>
     );
 };

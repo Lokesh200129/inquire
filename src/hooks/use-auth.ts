@@ -1,16 +1,13 @@
 import api from "@/lib/axios";
-import { useState } from "react";
 import { useUserStore } from "@/store/useUserStore";
 import { toast } from "sonner";
 import { useUiStore } from "@/store/useUiStore";
 export const useAuth = () => {
-    const [error, setError] = useState("");
-    const { setUser } = useUserStore((state) => state);
+    const { clearUser, setUser } = useUserStore((state) => state);
     const { setLoading } = useUiStore((state) => state)
 
     const signup = async (data: TUser) => {
         setLoading(true);
-        setError("");
         const promise = api.post("/signup", data);
         toast.promise(promise, {
             loading: 'Creating your account...',
@@ -20,7 +17,6 @@ export const useAuth = () => {
             },
             error: (err) => {
                 const msg = err.response?.data?.message || "Signup failed";
-                setError(msg);
                 return msg;
             }
         });
@@ -29,7 +25,7 @@ export const useAuth = () => {
             const response = await promise;
             console.log(response)
             return response.data.data;
-        } catch (err: any) {
+        } catch {
             return null;
         } finally {
             setLoading(false);
@@ -38,7 +34,6 @@ export const useAuth = () => {
 
     const login = async (data: TUser) => {
         setLoading(true);
-        setError('');
         const promise = api.post("/login", data);
         toast.promise(promise, {
             loading: 'Logging in...',
@@ -49,7 +44,6 @@ export const useAuth = () => {
             },
             error: (err) => {
                 const msg = err.response?.data?.message || "Login failed";
-                setError(msg);
                 return msg;
             }
         });
@@ -57,7 +51,7 @@ export const useAuth = () => {
         try {
             const response = await promise;
             return response.data.data;
-        } catch (err) {
+        } catch {
             return null;
         } finally {
             setLoading(false);
@@ -66,13 +60,12 @@ export const useAuth = () => {
 
     const fetchCurrentUser = async () => {
         setLoading(true);
-        setError('');
         try {
             const response = await api.get("/current-user");
             setUser(response.data);
             return response.data;
         } catch (error) {
-            setError(error);
+            return error;
         } finally {
             setLoading(false);
         }
@@ -80,14 +73,11 @@ export const useAuth = () => {
 
     const logout = async () => {
         setLoading(true);
-        setError('');
-
         const promise = api.post("/logout");
-
         toast.promise(promise, {
             loading: 'Logging out...',
             success: () => {
-                setUser(null);
+                clearUser();
                 return "Logged out successfully";
             },
             error: "Logout failed"
@@ -97,7 +87,7 @@ export const useAuth = () => {
             await promise;
             return null;
         } catch (error) {
-            setError(error);
+            return error;
         } finally {
             setLoading(false);
         }
@@ -105,7 +95,6 @@ export const useAuth = () => {
 
     const updateUser = async (formData: FormData) => {
         setLoading(true);
-        setError('');
         const promise = api.patch('/update-user', formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
         });
@@ -119,7 +108,6 @@ export const useAuth = () => {
             },
             error: (err) => {
                 const msg = err.response?.data?.message || "Update failed";
-                setError(msg);
                 return msg;
             }
         });
@@ -134,5 +122,5 @@ export const useAuth = () => {
         }
     };
 
-    return { signup, login, fetchCurrentUser, updateUser, logout, error };
+    return { signup, login, fetchCurrentUser, updateUser, logout };
 };      

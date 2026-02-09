@@ -8,7 +8,7 @@ import { useUserStore } from "@/store/useUserStore"
 import { useEffect } from "react"
 const Form = () => {
     const { register, handleSubmit, reset, formState: { isSubmitting } } = useForm({
-        defaultValues: { name: '', occupation: '', location: '', bio: '' }
+        defaultValues: { name: '', occupation: '', location: '', bio: '', profileImage: '' }
     });
     const { updateUser } = useAuth();
     const { setUser, user } = useUserStore((state) => state)

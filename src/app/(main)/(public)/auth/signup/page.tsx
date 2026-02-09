@@ -6,7 +6,7 @@ import { useUserStore } from "@/store/useUserStore";
 import { useRouter } from "next/navigation";
 
 const SignupPage = () => {
-    const { signup, loading, error } = useAuth();
+    const { signup } = useAuth();
     const router = useRouter();
     const isAuthenticated = useUserStore((state) => state.isAuthenticated)
 
@@ -21,8 +21,6 @@ const SignupPage = () => {
             <AuthCard
                 mode='signup'
                 authAction={signup}
-                loading={loading}
-                error={error}
             />
         </div>
     );
