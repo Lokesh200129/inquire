@@ -41,38 +41,36 @@ const guidelinesData = {
 
 export default function GuidelinesPage() {
     return (
-        <div className="min-h-screen bg-background">
-            <div className="container mx-auto px-4 py-12 max-w-4xl">
-                <div className="space-y-8">
-                    {/* Header */}
-                    <div className="space-y-4">
-                        <h1 className="text-4xl font-bold text-foreground">{guidelinesData.title}</h1>
-                        <p className="text-lg text-muted-foreground">
-                            {guidelinesData.description}
-                        </p>
-                    </div>
+        <div className="container mx-auto px-4 py-12 max-w-4xl">
+            <div className="space-y-8">
+                {/* Header */}
+                <div className="space-y-4">
+                    <h1 className="text-4xl font-bold text-foreground">{guidelinesData.title}</h1>
+                    <p className="text-lg text-muted-foreground">
+                        {guidelinesData.description}
+                    </p>
+                </div>
 
-                    <div className="border-t border-border pt-8 space-y-10">
-                        {/* Guidelines Sections */}
-                        {guidelinesData.sections.map((section, index) => (
-                            <section key={index} className="space-y-4">
-                                <h2 className="text-2xl font-semibold text-foreground">{section.title}</h2>
-                                <p className="text-muted-foreground leading-relaxed">
-                                    {section.content}
-                                </p>
-                            </section>
-                        ))}
-
-                        {/* Reporting Section */}
-                        <section className="space-y-4 bg-muted/50 p-6 rounded-lg border border-border">
-                            <h2 className="text-2xl font-semibold text-foreground">
-                                {guidelinesData.reportingSection.title}
-                            </h2>
+                <div className="border-t border-border pt-8 space-y-10">
+                    {/* Guidelines Sections */}
+                    {guidelinesData.sections.map((section, index) => (
+                        <section key={index} className="space-y-4">
+                            <h2 className="text-2xl font-semibold text-foreground">{section.title}</h2>
                             <p className="text-muted-foreground leading-relaxed">
-                                {guidelinesData.reportingSection.content}
+                                {section.content}
                             </p>
                         </section>
-                    </div>
+                    ))}
+
+                    {/* Reporting Section */}
+                    <section className="space-y-4 bg-muted/50 p-6 rounded-lg border border-border">
+                        <h2 className="text-2xl font-semibold text-foreground">
+                            {guidelinesData.reportingSection.title}
+                        </h2>
+                        <p className="text-muted-foreground leading-relaxed">
+                            {guidelinesData.reportingSection.content}
+                        </p>
+                    </section>
                 </div>
             </div>
         </div>

@@ -2,19 +2,23 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TPostForm, postSchema } from '@/lib/zod';
 import { useModalStore } from "@/store/useModalStore";
-import { useUserStore } from "@/store/useUserStore";
-import { usePost } from '../hooks/use-post'
-import { useQueryClient } from "@tanstack/react-query";
+import { useCreatePost } from '../hooks/use-create-post';
+import { useCurrentUser } from "@/hooks/auth/use-current-user";
+import parseError from "./parse-error";
 
 export const usePostForm = () => {
     const { setPostModal } = useModalStore();
-    const user = useUserStore((state) => state.user);
-    const { createPost } = usePost();
-    const queryClient = useQueryClient();
+    const { data: user } = useCurrentUser();
+
+    const { mutateAsync: createPost, isPending } = useCreatePost();
 
     const form = useForm<TPostForm>({
         resolver: zodResolver(postSchema),
-        defaultValues: { title: "", content: "", tags: "" },
+        defaultValues: {
+            title: "",
+            content: "",
+            tags: ""
+        },
     });
 
     const handleCancel = () => {
@@ -22,24 +26,58 @@ export const usePostForm = () => {
         setPostModal(false);
     };
 
+    // const onSubmit = async (data: TPostForm) => {
+    //     const formData = new FormData();
+    //     formData.append("title", data.title);
+    //     formData.append("content", data.content);
+
+    //     formData.append('_id', user?._id || "");
+
+    //     if (data.tags) {
+    //         formData.append("tags", data.tags);
+    //     }
+    //     console.log(data.questionImage)
+
+    //     if (data.questionImage?.[0]) {
+    //         formData.append("questionImage", data.questionImage[0]);
+    //     }
+
+    //     try {
+    //         await createPost(formData);
+    //         handleCancel();
+    //     } catch (error) {
+    //         console.error("Form submission error:", error);
+    //     }
+    // };
+
     const onSubmit = async (data: TPostForm) => {
         const formData = new FormData();
         formData.append("title", data.title);
         formData.append("content", data.content);
         formData.append('_id', user?._id || "");
-        if (data.tags) formData.append("tags", data.tags);
-        if (data.questionImage?.[0]) formData.append("questionImage", data.questionImage[0]);
+
+        if (data.tags) {
+            formData.append("tags", data.tags);
+        }
+
+        if (data.questionImage && data.questionImage.length > 0) {
+            data.questionImage.forEach((file: File) => {
+                formData.append("questionImage", file);
+            });
+        }
 
         try {
-            const res = await createPost(formData)
-            if (res) {
-                queryClient.invalidateQueries({ queryKey: ['questions'] });
-                handleCancel();
-            }
+            await createPost(formData);
+            handleCancel();
         } catch (error) {
-            console.error(error);
+            return parseError(error)
         }
     };
-
-    return { form, onSubmit, handleCancel, user };
+    return {
+        form,
+        onSubmit,
+        handleCancel,
+        user,
+        isSubmitting: isPending
+    };
 };

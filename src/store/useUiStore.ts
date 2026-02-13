@@ -1,11 +1,11 @@
-import { create } from 'zustand'
+// import { create } from 'zustand'
 
-interface StoreProp {
-    isLoading: boolean;
-    setLoading: (value: boolean) => void
-}
+// interface StoreProp {
+//     isLoading: boolean;
+//     setLoading: (value: boolean) => void
+// }
 
-export const useUiStore = create<StoreProp>((set) => ({
-    isLoading: false,
-    setLoading: (value) => set({ isLoading: value })
-}))
+// export const useUiStore = create<StoreProp>((set) => ({
+//     isLoading: false,
+//     setLoading: (value) => set({ isLoading: value })
+// }))

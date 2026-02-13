@@ -13,15 +13,49 @@ type TPost = {
     _id?: string,
     title: string;
     content: string;
-    questionImage?: string;
-    author: {
-        name: string;
-        occupation: string;
-        profileImage?: string;
-    };
+    questionImage?: string[];
+    author: TUser;
     tags?: string[];
     upvotes: string[];
     downvotes: string[];
     answerCount: number;
     createdAt: Date;
+}
+
+
+type TApiResponse<T> = {
+    success: boolean;
+    data: T;
+    message?: string;
+}
+
+interface TPaginatedResponse {
+    question: TPost[];
+    nextPage: number | null;
+    totalPages: number;
+}
+
+type TInfiniteQuestionsData = {
+    pages: TPaginatedResponse[];
+    pageParams: unknown[];
+}
+
+type TInfiniteQuestionsReturn = {
+    data: TInfiniteQuestionsData | undefined;
+    isLoading: boolean;
+    isFetchingNextPage: boolean;
+    hasNextPage: boolean;
+    fetchNextPage: () => void;
+    error?: Error | null;
+    observerTarget: React.RefObject<HTMLDivElement | null>;
+}
+
+interface TUserQuestionsReturn {
+    data: TInfiniteQuestionsData | undefined;
+    isLoading: boolean;
+    isFetchingNextPage: boolean;
+    hasNextPage: boolean;
+    fetchNextPage: () => void;
+    error: Error | null;
+    observerTarget: React.RefObject<HTMLDivElement | null>;
 }

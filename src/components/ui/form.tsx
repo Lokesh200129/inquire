@@ -12,7 +12,6 @@ import {
   type FieldPath,
   type FieldValues,
 } from "react-hook-form"
-
 import { cn } from "@/lib/utils"
 import { Label } from "@/components/ui/label"
 
@@ -97,7 +96,7 @@ function FormLabel({
     <Label
       data-slot="form-label"
       data-error={!!error}
-      className={cn("data-[error=true]:text-destructive", className)}
+      className={cn("data-[error=true]:text-destructive text-sm", className)}
       htmlFor={formItemId}
       {...props}
     />

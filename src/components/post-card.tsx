@@ -1,100 +1,238 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import {
   ArrowBigUp,
   ArrowBigDown,
   MessageSquare,
   Share2,
-  Trash2
+  Trash2,
+  ChevronDown,
+  ChevronUp,
+  Loader2
 } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import CustomUserAvatar from '@/components/user-avatar'
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
-import { usePost } from '@/hooks/use-post'
-// Inside your component
+import { useDeletePost } from '@/hooks/use-delete-post'
+import { cn } from "@/lib/utils";
+import PostImageCarousel from '@/components/carousel'
+
 interface CardProp {
   post: TPost,
   isProfile?: boolean
 }
 
 const PostCard = ({ post, isProfile }: CardProp) => {
-  const { handleDelete } = usePost();
+  const [isCarouselOpen, setIsCarouselOpen] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+
+  const openCarousel = (index: number) => {
+    setSelectedImageIndex(index);
+    setIsCarouselOpen(true);
+  };
+
+  const { mutate: deletePost, isPending } = useDeletePost();
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const isLongContent = post.content.length > 200
+
+  const handleToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsExpanded(!isExpanded);
+  };
+
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (post._id) {
+      deletePost(post._id);
+    }
+  };
 
   return (
-    <Card className="w-full shadow-none border-none rounded-xl py-8 px-4 mt-4">
+    <Card className="w-full shadow-none border-none rounded-xl py-6 px-4 mt-4 bg-card">
       {/* 1. Header: User Details */}
-      <CardHeader className="flex flex-row items-center justify-between p-0 mb-1 space-y-0 capitalize">
-        < div className="flex items-center gap-3" >
-          <Avatar className="size-9 border">
-            <AvatarImage src={post.author.profileImage} alt={post.author.name} />
-            <AvatarFallback>{post?.author?.name?.charAt(0)}</AvatarFallback>
-          </Avatar>
+      <CardHeader className="flex flex-row items-center justify-between p-0 mb-4 space-y-0 capitalize">
+        <div className="flex items-center gap-3">
+          <CustomUserAvatar src={post?.author?.profileImage} name={post?.author?.name} size="md" />
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
-              <span className="font-bold text-lg hover:underline cursor-pointer">
+              <span className="font-bold text-base hover:underline cursor-pointer text-foreground">
                 {post.author.name}
               </span>
-              <span className="text-muted-foreground text-xs">•</span>
+              <span className="text-muted-foreground text-[10px]">•</span>
               <span className="text-muted-foreground text-xs">
                 {formatDistanceToNow(new Date(post.createdAt))} ago
               </span>
             </div>
-            <p className="text-xs text-muted-foreground leading-none">
+            <p className="text-xs text-muted-foreground">
               {post.author.occupation}
             </p>
           </div>
-        </div >
-        {isProfile &&
-          <Button variant="ghost" size="icon" className="rounded-full size-8" onClick={() => handleDelete(post._id!)}>
-            <Trash2 className="size-4 text-muted-foreground" />
-          </Button>
-        }
-      </CardHeader >
+        </div>
 
-      {/* 2. Content: Title and Snippet */}
-      < CardContent className="p-0 space-y-3 cursor-pointer capitalize" >
-        <h2 className="text-lg font-bold leading-6 hover:text-primary transition-colors px-0">
+        {/* 3. Delete Button with Loading State */}
+        {isProfile && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-full size-8"
+            onClick={handleDeleteClick}
+            disabled={isPending}
+          >
+            {isPending ? (
+              <Loader2 className="size-4 animate-spin text-muted-foreground" />
+            ) : (
+              <Trash2 className="size-4 text-muted-foreground hover:text-destructive transition-colors" />
+            )}
+          </Button>
+        )}
+      </CardHeader>
+
+      <CardContent className="p-0 space-y-3">
+        <h2 className="text-xl font-bold leading-tight text-foreground px-0 capitalize group-hover/link:text-blue-600 transition-colors mb-2">
           {post.title}
         </h2>
 
-        <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed">
-          {post.content}
-        </p>
+        <div className="relative overflow-hidden">
+          <div
+            className={cn(
+              "prose prose-sm max-w-none text-sm leading-relaxed transition-all duration-500 ease-in-out ", "whitespace-pre-wrap",
+              !isExpanded ? "max-h-24 overflow-hidden" : "max-h-auto"
+            )}
+            style={{
+              whiteSpace: 'pre-wrap',
+              wordWrap: 'break-word'
+            }}
+            dangerouslySetInnerHTML={{ __html: post.content }}
+          />
 
-        {
-          post.questionImage && (
-            <div className="relative w-full aspect-video rounded-lg overflow-hidden border">
-              <Image
-                src={post.questionImage}
-                alt="Post media"
-                fill
-                className="object-cover hover:scale-105 transition-transform duration-500"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              />
+          {!isExpanded && isLongContent && (
+            <div className="absolute bottom-0 left-0 w-full h-8 bg-linear-to-t from-card to-transparent" />
+          )}
+        </div>
+
+        {isLongContent && (
+          <button
+            onClick={handleToggle}
+            className="text-blue-600 text-xs font-bold mt-1 hover:underline flex items-center gap-1 normal-case relative z-10"
+          >
+            {isExpanded ? (
+              <>Show Less <ChevronUp size={14} /></>
+            ) : (
+              <>See More <ChevronDown size={14} /></>
+            )}
+          </button>
+        )}
+
+        {post.questionImage && post.questionImage?.length > 0 && post.questionImage?.some((img: string) => img && img.trim() !== '') && (
+          <div className={cn(
+            "relative w-full rounded-xl overflow-hidden border bg-muted transition-all duration-500",
+            isExpanded ? "aspect-auto max-h-150" : "aspect-video"
+          )}>
+
+            <div className={cn(
+              "grid h-full w-full gap-0.5 bg-border",
+              post.questionImage.length === 1 ? "grid-cols-1" : "grid-cols-2"
+            )}>
+              {/* 1 Image Logic */}
+              {post.questionImage.length === 1 && (
+                <div className="relative w-full h-full overflow-hidden bg-muted" onClick={() => openCarousel(0)}>
+                  <Image
+                    src={post.questionImage[0]}
+                    alt="Post media"
+                    width={800}
+                    height={450}
+                    className={cn(
+                      "w-full object-cover h-full hover:scale-110 cursor-pointer transition-transform duration-500",
+                      isExpanded ? "h-auto" : "h-full"
+                    )}
+                  />
+                </div>
+              )}
+
+              {/* 2, 3, 4 Images Logic */}
+              {post.questionImage.length > 1 && (
+                <>
+                  {/* Left Half */}
+                  <div className="relative h-full w-full bg-muted overflow-hidden" onClick={() => openCarousel(0)}>
+                    <Image
+                      src={post.questionImage[0]}
+                      alt="Post media 1"
+                      fill
+                      className="object-cover hover:scale-110 cursor-pointer transition-transform duration-500"
+                    />
+                  </div>
+
+                  {/* Right Half */}
+                  <div className={cn(
+                    "grid gap-0.5", // Gap for vertical separation
+                    post.questionImage.length === 2 ? "grid-cols-1" : "grid-rows-2"
+                  )}>
+                    {post.questionImage.length === 2 && (
+                      <div className="relative h-full w-full bg-muted overflow-hidden" onClick={() => openCarousel(1)}>
+                        <Image src={post.questionImage[1]} alt="Post media 2" fill className="object-cover hover:scale-110 cursor-pointer transition-transform duration-500" />
+                      </div>
+                    )}
+
+                    {post.questionImage.length === 3 && (
+                      <>
+                        <div className="relative h-full w-full bg-muted overflow-hidden" onClick={() => openCarousel(1)}>
+                          <Image src={post.questionImage[1]} alt="Post media 2" fill className="object-cover hover:scale-110 cursor-pointer transition-transform duration-500" />
+                        </div>
+                        <div className="relative h-full w-full bg-muted overflow-hidden" onClick={() => openCarousel(2)}>
+                          <Image src={post.questionImage[2]} alt="Post media 3" fill className="object-cover hover:scale-110 cursor-pointer transition-transform duration-500" />
+                        </div>
+                      </>
+                    )}
+
+                    {post.questionImage.length === 4 && (
+                      <>
+                        <div className="relative h-full w-full bg-muted overflow-hidden" onClick={() => openCarousel(1)}>
+                          <Image src={post.questionImage[1]} alt="Post media 2" fill className="object-cover hover:scale-110 cursor-pointer transition-transform duration-500" />
+                        </div>
+                        {/* Horizontal split for the bottom-right quadrant */}
+                        <div className="grid grid-cols-2 gap-0.5 h-full w-full">
+                          <div className="relative h-full w-full bg-muted overflow-hidden" onClick={() => openCarousel(2)}>
+                            <Image src={post.questionImage[2]} alt="Post media 3" fill className="object-cover hover:scale-110 cursor-pointer transition-transform duration-500" />
+                          </div>
+                          <div className="relative h-full w-full bg-muted overflow-hidden" onClick={() => openCarousel(3)}>
+                            <Image src={post.questionImage[3]} alt="Post media 4" fill className="object-cover hover:scale-110 cursor-pointer transition-transform duration-500" />
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
-          )
-        }
-        {/* tags */}
-        <div className="flex flex-wrap gap-2 pt-1 normal-case">
+          </div>
+        )}
+        <PostImageCarousel
+          images={post.questionImage || []}
+          isVisible={isCarouselOpen}
+          onClose={() => setIsCarouselOpen(false)}
+          initialIndex={selectedImageIndex}
+        />
+        <div className="flex flex-wrap gap-2 pt-2 normal-case">
           {post?.tags?.map((tag) => (
             <Badge
               key={tag}
               variant="secondary"
-              className="font-normal px-2 py-0 text-gray-600"
+              className="font-medium px-3 py-0.5 text-[10px] bg-secondary/50 text-secondary-foreground rounded-full border-none"
             >
               #{tag}
             </Badge>
           ))}
         </div>
-      </CardContent >
+      </CardContent>
 
       {/* 3. Footer: Interactions */}
-      < CardFooter className="p-0 mt-4 flex items-center justify-between" >
+      <CardFooter className="p-0 flex items-center justify-between">
         <div className="flex items-center gap-1">
-          {/* Upvote/Downvote Group */}
           <div className="flex items-center bg-muted/50 rounded-full border">
             <Button variant="ghost" size="sm" className="rounded-l-full h-8 px-3 gap-1 hover:bg-primary/10 hover:text-primary group">
               <ArrowBigUp className="size-5 group-active:scale-125 transition-transform" />
@@ -106,19 +244,20 @@ const PostCard = ({ post, isProfile }: CardProp) => {
             </Button>
           </div>
 
-          {/* Comments Link */}
           <Button variant="ghost" size="sm" className="rounded-full h-8 gap-2 text-muted-foreground">
             <MessageSquare className="size-4" />
             <span className="text-xs font-medium">{post.answerCount}</span>
           </Button>
         </div>
 
-        {/* Share Button */}
         <Button variant="ghost" size="icon" className="rounded-full h-8 w-8 text-muted-foreground">
           <Share2 className="size-4" />
         </Button>
-      </CardFooter >
-    </Card >
+      </CardFooter>
+    </Card>
   );
 };
-export default PostCard
+
+export default PostCard;
+
+

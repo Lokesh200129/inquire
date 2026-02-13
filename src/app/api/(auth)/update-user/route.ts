@@ -4,6 +4,7 @@ import User from "@/models/User";
 import { NextRequest } from "next/server";
 import { v2 as cloudinary } from 'cloudinary'
 import { cloudinaryConfig } from '@/lib/cloudinary'
+import parseError from "@/lib/parse-error";
 
 export const PATCH = tryCatchWrapper(async (req: NextRequest) => {
     cloudinaryConfig();
@@ -14,14 +15,12 @@ export const PATCH = tryCatchWrapper(async (req: NextRequest) => {
     let imageUrl = existingUser?.profileImage || "";
 
     if (file && file.size > 0) {
-        // first delete older
         if (existingUser?.profileImage) {
             try {
                 const publicId = existingUser.profileImage.split('/').slice(-2).join('/').split('.')[0];
                 await cloudinary.uploader.destroy(publicId);
-
             } catch (err) {
-                console.error("Cloudinary delete failed:", err);
+                return parseError(err)
             }
         }
 
@@ -49,7 +48,6 @@ export const PATCH = tryCatchWrapper(async (req: NextRequest) => {
         bio,
         profileImage: imageUrl || "https://res.cloudinary.com/db6wium4n/image/upload/v1770358944/avatar_xibibu.png"
     };
-    console.log(updatePayload)
     const updatedUser = await User.findByIdAndUpdate(
         _id,
         { $set: updatePayload },

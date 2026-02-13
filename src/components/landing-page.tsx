@@ -4,9 +4,10 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MessageSquare, ShieldCheck, Zap } from "lucide-react";
-import { useUserStore } from "@/store/useUserStore";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { useCurrentUser } from "@/hooks/auth/use-current-user";
+
 const features = [
     {
         title: "Contextual Authority",
@@ -26,35 +27,36 @@ const features = [
 ];
 
 export default function LandingPage() {
-
-    const isAuthenticated = useUserStore((state) => state.isAuthenticated);
     const router = useRouter();
+    const { data: user, isLoading } = useCurrentUser();
+    const isAuthenticated = !!user;
 
     useEffect(() => {
-        if (isAuthenticated) {
+        if (!isLoading && isAuthenticated) {
             router.replace("/feed");
         }
-    }, [isAuthenticated, router]);
+    }, [isAuthenticated, isLoading, router]);
 
-    if (isAuthenticated) return null;
+    if (isLoading || isAuthenticated) return null;
+
     return (
         <>
             <section className="flex flex-col items-center justify-center min-h-[70vh] px-4 pt-20">
                 <Badge variant="secondary" className="mb-4 rounded-full px-4 py-1">
                     No Bots. Just Brains.
                 </Badge>
-                <h1 className="text-6xl md:text-8xl font-extrabold tracking-tighter text-center max-w-5xl">
-                    KNOWLEDGE GROWS BY <span className="text-primary italic">SHARING.</span>
+                <h1 className="text-6xl md:text-8xl font-extrabold tracking-tighter text-center max-w-5xl uppercase">
+                    Knowledge grows by <span className="text-primary italic">sharing.</span>
                 </h1>
                 <p className="mt-6 text-xl text-muted-foreground text-center max-w-2xl">
                     Inquire is the platform where curious minds meet expertise. Ask the hard questions, share your unique insights, and build your digital authority.
                 </p>
                 <div className="mt-10 flex flex-col sm:flex-row gap-4">
                     <Button size="lg" className="rounded-full px-8 h-12 text-md" asChild>
-                        <Link href="/auth/signup">{isAuthenticated ? 'Go To Feed' : 'Start Inquiring'}</Link>
+                        <Link href="/auth/signup">Start Inquiring</Link>
                     </Button>
-                    <Button size="lg" variant="outline" className="rounded-full px-8 h-12 text-md">
-                        Explore Discussions
+                    <Button size="lg" variant="outline" className="rounded-full px-8 h-12 text-md" asChild>
+                        <Link href="/discover">Explore Discussions</Link>
                     </Button>
                 </div>
             </section>
@@ -63,7 +65,7 @@ export default function LandingPage() {
                 <div className="container mx-auto px-6">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {features.map((f, i) => (
-                            <Card key={i} className="  hover:border hover:border-gray-400 bg-transparent">
+                            <Card key={i} className="hover:border hover:border-gray-400 bg-transparent transition-colors">
                                 <CardHeader>{f.icon}</CardHeader>
                                 <CardContent className="space-y-2">
                                     <CardTitle className="text-2xl">{f.title}</CardTitle>
@@ -84,7 +86,7 @@ export default function LandingPage() {
                         Join a growing community of thousands who use Inquire to discover, learn, and grow every single day.
                     </p>
                     <Button size="lg" variant="secondary" className="rounded-full px-12 h-14 text-lg font-bold" asChild>
-                        <Link href="/auth/signup">{isAuthenticated ? 'Share Now' : 'Create Your Profile'}</Link>
+                        <Link href="/auth/signup">Create Your Profile</Link>
                     </Button>
                 </div>
             </section>

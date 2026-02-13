@@ -254,6 +254,40 @@ body {
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
   }
+}
+
+.ProseMirror ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+}
+
+.ProseMirror ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+}
+
+.ProseMirror li {
+  display: list-item;
+}
+
+.ProseMirror ol {
+  list-style-position: outside;
+  padding-left: 1.5rem;
+}
+
+.ProseMirror ol li {
+  display: list-item;
+  list-style-type: decimal;
+}
+
+.prose p {
+  min-height: 1.5em;
+  white-space: pre-wrap;
+}
+
+.prose p:empty::before {
+  content: '\200b';
+  
 }

@@ -1,15 +1,15 @@
 'use client';
+
 import Link from 'next/link';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Twitter, Github, Linkedin, Mail } from 'lucide-react';
-import { useUserStore } from '@/store/useUserStore';
+import { useCurrentUser } from '@/hooks/auth/use-current-user';
+import { usePathname } from 'next/navigation';
 
 const footerLinks = [
-
-
     {
         title: 'Quick Links',
         items: [
@@ -23,7 +23,6 @@ const footerLinks = [
             { name: 'Guidelines', href: '/guidelines' },
             { name: 'Help Center', href: '/help-center' },
             { name: 'About', href: '/about' },
-
         ]
     },
     {
@@ -45,21 +44,27 @@ const socialLinks = [
 export default function Footer() {
     const [email, setEmail] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const { user } = useUserStore();
+    const pathname = usePathname();
+    const { data: user } = useCurrentUser();
+    const isFeedPage = pathname === "/feed";
+    if (isFeedPage) return null;
 
     const handleSubscribe = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
-        toast.success('Thanks for subscribing! We\'ll keep you updated with the best questions and answers.');
+
+        // Simulating API call
+        toast.success("Thanks for subscribing! We'll keep you updated with the best questions and answers.");
         setEmail("");
-        setTimeout(() => setIsSubmitting(false), 5000);
+
+        setTimeout(() => setIsSubmitting(false), 2000);
     };
 
     const currentYear = new Date().getFullYear();
 
     return (
-        <footer className="bg-background  mt-12">
-            <div className="container mx-auto px-8 py-12">
+        <footer className="border-t mt-12 w-full bg-muted/40">
+            <div className="container mx-auto px-8 py-12 ">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
                     {/* LEFT SIDE: Brand & Newsletter */}
                     <div className="space-y-6">
@@ -106,7 +111,7 @@ export default function Footer() {
                                     disabled={isSubmitting}
                                     className="px-8"
                                 >
-                                    Subscribe
+                                    {isSubmitting ? "Subscribing..." : "Subscribe"}
                                 </Button>
                             </form>
                         </div>
@@ -123,10 +128,10 @@ export default function Footer() {
                                     {section.items.map((link) => (
                                         <li key={link.name}>
                                             <Link
-                                                href={link.href}
+                                                href={user && link.name === 'Create Profile' ? `/profile/${user._id}` : link.href}
                                                 className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium"
                                             >
-                                                {link.name}
+                                                {user && link.name === 'Create Profile' ? 'My Profile' : link.name}
                                             </Link>
                                         </li>
                                     ))}
@@ -137,7 +142,7 @@ export default function Footer() {
                 </div>
 
                 {/* Bottom Bar */}
-                <div className="py-6 mt-8 border-t border-border flex flex-col sm:flex-row justify-center items-center gap-4">
+                <div className="pt-6 mt-8 border-t border-border flex flex-col sm:flex-row justify-center items-center">
                     <p className="text-muted-foreground text-sm">
                         © {currentYear} Inquire. All rights reserved.
                     </p>

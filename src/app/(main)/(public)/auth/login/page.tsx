@@ -1,20 +1,24 @@
 "use client";
 import AuthCard from "../components/auth-card";
-import { useAuth } from "@/hooks/use-auth";
+import { useLogin } from "@/hooks/auth/use-login";
+import { useCurrentUser } from "@/hooks/auth/use-current-user";
 import { useEffect } from "react";
-import { useUserStore } from "@/store/useUserStore";
 import { useRouter } from "next/navigation";
 
 const LoginPage = () => {
-    const { login } = useAuth();
     const router = useRouter();
-    const isAuthenticated = useUserStore((state) => state.isAuthenticated)
+    const { data: user, isLoading } = useCurrentUser();
+    const isAuthenticated = !!user;
+    const { mutate: login } = useLogin();
 
     useEffect(() => {
-        if (isAuthenticated) {
-            router.replace('/feed')
+        if (!isLoading && isAuthenticated) {
+            router.replace('/feed');
         }
-    }, [])
+    }, [isAuthenticated, isLoading, router]);
+
+    // Optional: Return null or a loader if checking auth to prevent "flicker"
+    if (isLoading) return null;
 
     return (
         <div className="flex justify-center items-center h-170 ">

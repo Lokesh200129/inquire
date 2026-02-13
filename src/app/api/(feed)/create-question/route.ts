@@ -8,7 +8,7 @@ import { v2 as cloudinary } from 'cloudinary'
 export const POST = tryCatchWrapper(async (req: NextRequest) => {
     cloudinaryConfig();
     const formData = await req.formData();
-    const file = formData.get('questionImage') as File;
+    const files = formData.getAll('questionImage') as File[];
     const title = formData.get('title');
     const content = formData.get('content');
     const tags = formData.get('tags');
@@ -18,21 +18,30 @@ export const POST = tryCatchWrapper(async (req: NextRequest) => {
         return ApiResponse.error('Missing Data', 400);
     }
 
-    let imageUrl = '';
+    const imageUrls: string[] = [];
 
-    if (file && file.size > 0) {
-        const arrayBuffer = await file.arrayBuffer();
-        const buffer = Buffer.from(arrayBuffer);
-        const uploadResponse: any = await new Promise((resolve, reject) => {
-            cloudinary.uploader.upload_stream(
-                { folder: "inquire_posts" },
-                (error, result) => {
-                    if (error) reject(error);
-                    else resolve(result);
-                }
-            ).end(buffer);
+    if (files.length > 0) {
+        const uploadPromises = files.map(async (file) => {
+            if (file.size === 0) return null;
+
+            const arrayBuffer = await file.arrayBuffer();
+            const buffer = Buffer.from(arrayBuffer);
+
+            return new Promise((resolve, reject) => {
+                cloudinary.uploader.upload_stream(
+                    { folder: "inquire_posts" },
+                    (error, result) => {
+                        if (error) reject(error);
+                        else resolve(result?.secure_url);
+                    }
+                ).end(buffer);
+            });
         });
-        imageUrl = uploadResponse.secure_url;
+
+        const results = await Promise.all(uploadPromises);
+        results.forEach(url => {
+            if (url) imageUrls.push(url as string);
+        });
     }
 
     const question = await Question.create({
@@ -40,8 +49,9 @@ export const POST = tryCatchWrapper(async (req: NextRequest) => {
         title,
         content,
         tags: tags ? (tags as string).split(',') : [],
-        questionImage: imageUrl
+        questionImage: imageUrls
     });
+
     if (question) {
         return ApiResponse.success(question, 201);
     }

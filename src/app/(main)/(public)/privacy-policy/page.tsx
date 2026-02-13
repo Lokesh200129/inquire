@@ -94,84 +94,84 @@ const privacyPolicyData = {
     ],
     contact: {
         title: 'Contact Us',
-        content: 'If you have questions about this privacy policy or how we handle your data, please contact us at privacy@inquire.com or visit our contact page.'
+        content: 'If you have questions about this privacy policy or how we handle your data, please contact us at support@inquire.com or visit our contact page.'
     }
 };
 
 export default function PrivacyPolicyPage() {
     return (
-        <div className="min-h-screen bg-background">
-            <div className="container mx-auto px-4 py-12 max-w-4xl">
-                <div className="space-y-8">
-                    {/* Header */}
-                    <div className="space-y-4">
-                        <h1 className="text-4xl font-bold text-foreground">{privacyPolicyData.title}</h1>
-                        <p className="text-muted-foreground">
-                            Last updated: {privacyPolicyData.lastUpdated}
-                        </p>
-                        <p className="text-lg text-muted-foreground leading-relaxed">
-                            {privacyPolicyData.intro}
-                        </p>
-                    </div>
 
-                    <div className="border-t border-border pt-8 space-y-10">
-                        {/* Sections */}
-                        {privacyPolicyData.sections.map((section) => (
-                            <section key={section.number} className="space-y-4">
-                                <h2 className="text-2xl font-semibold text-foreground">
-                                    {section.number}. {section.title}
-                                </h2>
+        <div className="container mx-auto px-4 py-12 max-w-4xl">
+            <div className="space-y-8">
+                {/* Header */}
+                <div className="space-y-4">
+                    <h1 className="text-4xl font-bold text-foreground">{privacyPolicyData.title}</h1>
+                    <p className="text-muted-foreground">
+                        Last updated: {privacyPolicyData.lastUpdated}
+                    </p>
+                    <p className="text-lg text-muted-foreground leading-relaxed">
+                        {privacyPolicyData.intro}
+                    </p>
+                </div>
 
-                                {section.content && (
-                                    <p className="text-muted-foreground leading-relaxed">
-                                        {section.content}
-                                    </p>
-                                )}
-
-                                {section.intro && (
-                                    <p className="text-muted-foreground leading-relaxed">
-                                        {section.intro}
-                                    </p>
-                                )}
-
-                                {section.items && (
-                                    <div className="space-y-3 text-muted-foreground leading-relaxed">
-                                        {section.items.map((item, index) => (
-                                            <p key={index}>
-                                                <span className="font-medium text-foreground">{item.label}:</span> {item.content}
-                                            </p>
-                                        ))}
-                                    </div>
-                                )}
-
-                                {section.listItems && (
-                                    <ul className="list-disc list-inside space-y-2 ml-4 text-muted-foreground">
-                                        {section.listItems.map((item, index) => (
-                                            <li key={index}>{item}</li>
-                                        ))}
-                                    </ul>
-                                )}
-
-                                {section.note && (
-                                    <p className="font-medium text-foreground">
-                                        {section.note}
-                                    </p>
-                                )}
-                            </section>
-                        ))}
-
-                        {/* Contact */}
-                        <section className="space-y-4 bg-muted/50 p-6 rounded-lg border border-border">
+                <div className="border-t border-border pt-8 space-y-10">
+                    {/* Sections */}
+                    {privacyPolicyData.sections.map((section) => (
+                        <section key={section.number} className="space-y-4">
                             <h2 className="text-2xl font-semibold text-foreground">
-                                {privacyPolicyData.contact.title}
+                                {section.number}. {section.title}
                             </h2>
-                            <p className="text-muted-foreground leading-relaxed">
-                                {privacyPolicyData.contact.content}
-                            </p>
+
+                            {section.content && (
+                                <p className="text-muted-foreground leading-relaxed">
+                                    {section.content}
+                                </p>
+                            )}
+
+                            {section.intro && (
+                                <p className="text-muted-foreground leading-relaxed">
+                                    {section.intro}
+                                </p>
+                            )}
+
+                            {section.items && (
+                                <div className="space-y-3 text-muted-foreground leading-relaxed">
+                                    {section.items.map((item, index) => (
+                                        <p key={index}>
+                                            <span className="font-medium text-foreground">{item.label}:</span> {item.content}
+                                        </p>
+                                    ))}
+                                </div>
+                            )}
+
+                            {section.listItems && (
+                                <ul className="list-disc list-inside space-y-2 ml-4 text-muted-foreground">
+                                    {section.listItems.map((item, index) => (
+                                        <li key={index}>{item}</li>
+                                    ))}
+                                </ul>
+                            )}
+
+                            {section.note && (
+                                <p className="font-medium text-foreground">
+                                    {section.note}
+                                </p>
+                            )}
                         </section>
-                    </div>
+                    ))}
+
+                    {/* Contact */}
+                    <section className="space-y-4 bg-muted/50 p-6 rounded-lg border border-border">
+                        <h2 className="text-2xl font-semibold text-foreground">
+                            {privacyPolicyData.contact.title}
+                        </h2>
+                        <p className="text-muted-foreground leading-relaxed">
+                            {privacyPolicyData.contact.content}
+                        </p>
+                    </section>
                 </div>
             </div>
         </div>
+
     );
 }

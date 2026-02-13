@@ -1,26 +1,30 @@
 "use client";
 import AuthCard from "../components/auth-card";
-import { useAuth } from "@/hooks/use-auth";
+import { useSignup } from "@/hooks/auth/use-signup";
+import { useCurrentUser } from "@/hooks/auth/use-current-user"; // Import your query hook
 import { useEffect } from "react";
-import { useUserStore } from "@/store/useUserStore";
 import { useRouter } from "next/navigation";
 
 const SignupPage = () => {
-    const { signup } = useAuth();
     const router = useRouter();
-    const isAuthenticated = useUserStore((state) => state.isAuthenticated)
+    const { data: user, isLoading: isAuthLoading } = useCurrentUser();
+    const isAuthenticated = !!user;
+
+    const { mutate: signupAction } = useSignup();
 
     useEffect(() => {
-        if (isAuthenticated) {
-            router.replace('/feed')
+
+        if (!isAuthLoading && isAuthenticated) {
+            router.replace('/feed');
         }
-    }, [])
+    }, [isAuthenticated, isAuthLoading, router]);
+    if (isAuthLoading) return null;
 
     return (
         <div className="flex justify-center items-center h-170">
             <AuthCard
                 mode='signup'
-                authAction={signup}
+                authAction={signupAction}
             />
         </div>
     );

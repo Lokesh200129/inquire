@@ -1,16 +1,8 @@
 "use client";
-import { useEffect } from "react";
-import { useAuth } from "@/hooks/use-auth";
-import { useUserStore } from "@/store/useUserStore";
+import { useCurrentUser } from "@/hooks/auth/use-current-user";
+// import GlobalLoader from "./global-loader";
 
 export default function ClientProvider({ children }: { children: React.ReactNode }) {
-    const { fetchCurrentUser } = useAuth();
-    const isAuthenticated = useUserStore((state) => state.isAuthenticated);
-    useEffect(() => {
-        if (!isAuthenticated) {
-            fetchCurrentUser();
-        }
-    }, []);
-
+    useCurrentUser();
     return <>{children}</>;
 }

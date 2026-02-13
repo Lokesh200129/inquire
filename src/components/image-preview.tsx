@@ -1,26 +1,48 @@
+"use client";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 
-export const ImagePreview = ({ file, onRemove }: { file: File | undefined, onRemove: () => void }) => {
-    const [preview, setPreview] = useState<string | null>(null);
+export const ImagePreview = ({ files, onRemove }: { files: File[] | undefined, onRemove: (index: number) => void }) => {
+    const [previews, setPreviews] = useState<string[]>([]);
 
     useEffect(() => {
-        if (!file) return setPreview(null);
-        const url = URL.createObjectURL(file);
-        setPreview(url);
-        return () => URL.revokeObjectURL(url);
-    }, [file]);
+        if (!files || files.length === 0) {
+            setPreviews([]);
+            return;
+        }
 
-    if (!preview) return null;
+        const objectUrls = files.map(file => URL.createObjectURL(file));
+        setPreviews(objectUrls);
+
+        return () => objectUrls.forEach(url => URL.revokeObjectURL(url));
+    }, [files]);
+
+    if (previews.length === 0) return null;
 
     return (
-        <div className="relative mt-4 max-w-1/3 p-4 rounded-lg border bg-muted">
-            <Image src={preview} alt="Preview" className="object-cover size-28" width={112} height={112} />
-            <Button type="button" variant="ghost" size="icon" onClick={onRemove} className="absolute top-2 right-2 rounded-full h-8 w-8 shadow-md">
-                <X className="h-4 w-4" />
-            </Button>
+        <div className="flex flex-wrap gap-3">
+            {previews.map((url, index) => (
+                <div key={url} className="relative group rounded-lg border bg-muted overflow-hidden">
+                    <Image
+                        src={url}
+                        alt={`Preview ${index}`}
+                        className="object-cover size-24"
+                        width={96}
+                        height={96}
+                    />
+                    <Button
+                        type="button"
+                        variant="destructive"
+                        size="icon"
+                        onClick={() => onRemove(index)}
+                        className="absolute top-1 right-1 h-6 w-6 rounded-full bg-red-500"
+                    >
+                        <X className="h-3 w-3 " strokeWidth={3} />
+                    </Button>
+                </div>
+            ))}
         </div>
     );
 };

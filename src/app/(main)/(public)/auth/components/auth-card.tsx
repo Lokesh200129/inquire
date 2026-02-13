@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react"; // Added for state management
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
@@ -7,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react"; // Added Lucide icons
 
 interface authProp {
     mode: 'login' | 'signup';
@@ -17,6 +19,7 @@ interface authProp {
 
 export default function AuthCard({ mode, authAction, loading, error }: authProp) {
     const router = useRouter();
+    const [showPassword, setShowPassword] = useState(false); // State for visibility
     const isLogin = mode === 'login';
     const title = isLogin ? "Welcome Back" : "Create Account";
     const description = isLogin ? "Log in to your account" : "Join our community today";
@@ -72,20 +75,30 @@ export default function AuthCard({ mode, authAction, loading, error }: authProp)
 
                     <Field>
                         <FieldLabel htmlFor="password">Password<span className="text-destructive">*</span></FieldLabel>
-                        <Input
-                            id="password"
-                            type="password"
-                            placeholder="Enter Password"
-                            {...register("password", {
-                                required: "Password is required",
-                                minLength: { value: 6, message: "Minimum 6 characters" }
-                            })}
-                        />
+                        <div className="relative"> {/* Wrapper for positioning the icon */}
+                            <Input
+                                id="password"
+                                type={showPassword ? "text" : "password"} // Dynamic type
+                                placeholder="Enter Password"
+                                className="pr-10" // Padding so text doesn't overlap icon
+                                {...register("password", {
+                                    required: "Password is required",
+                                    minLength: { value: 6, message: "Minimum 6 characters" }
+                                })}
+                            />
+                            <button
+                                type="button" // Prevents form submission
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                            >
+                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                            </button>
+                        </div>
                         {errors.password && <p className="text-destructive text-xs mt-1">{errors.password.message as string}</p>}
                     </Field>
                 </CardContent>
 
-                <CardFooter className="flex flex-col gap-4 border-t pt-6">
+                <CardFooter className="flex flex-col gap-4  pt-6">
                     <Button type="submit" className="w-full" disabled={loading}>
                         {loading ? "Processing..." : "Submit"}
                     </Button>

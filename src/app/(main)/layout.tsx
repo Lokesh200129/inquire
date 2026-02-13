@@ -2,13 +2,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import LayoutWrapper from "@/components/LayoutToggle";
 import ClientProvider from "@/components/client-wrapper";
-import { GlobalLoader } from "@/components/global-loader";
 import { Toaster } from 'sonner'
 import PostFormModal from "@/components/post-form-modal";
 import { Providers } from "@/components/provider";
-import Footer from "@/components/footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -65,16 +62,12 @@ export default function RootLayout({
       >
         <Providers>
           <Toaster richColors position="top-center" duration={2000} />
-          <GlobalLoader />
           <ClientProvider>
-            <main className="container mx-auto z-10 bg-accent ">
-              <LayoutWrapper>
-                {children}
-              </LayoutWrapper>
+            <main className="w-full z-10">
+              {children}
             </main>
             <PostFormModal />
           </ClientProvider>
-          <Footer />
         </Providers>
       </body>
     </html>

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import { useUserStore } from "@/store/useUserStore";
+import { useCurrentUser } from "@/hooks/auth/use-current-user";
 import { toast } from "sonner";
 
 interface AuthWrapperProps {
@@ -15,11 +15,15 @@ const AuthWrapper = ({
     destinationPath = "/auth/login"
 }: AuthWrapperProps) => {
     const router = useRouter();
-    const isAuthenticated = useUserStore((state) => state.isAuthenticated);
+    const { data: user, isLoading } = useCurrentUser();
+
+    const isAuthenticated = !!user;
 
     const handleClick = (e: React.MouseEvent) => {
+        if (isLoading) return;
+
         if (!isAuthenticated) {
-            toast.error('Please login')
+            toast.error('Please login to continue');
 
             e.preventDefault();
             e.stopPropagation();

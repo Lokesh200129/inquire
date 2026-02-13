@@ -16,7 +16,8 @@ const QuestionSchema = new Schema({
         type: String
     },
     questionImage: {
-        type: String,
+        type: [String],
+        default: []
     },
     views: {
         type: Number,
