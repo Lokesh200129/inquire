@@ -24,10 +24,11 @@ const Bottombar = () => {
         { name: 'Feed', to: '/feed', icon: Layers2 },
         { name: 'Discover', to: '/discover', icon: Compass },
         { name: 'Post', to: '#', icon: PlusCircle, isAction: true },
-        ...(isLoggedIn
-            ? [{ name: 'Notifications', to: '/notification', icon: Bell }]
-            : []
-        ),
+        {
+            name: 'Notifications',
+            to: isLoggedIn ? '/notification' : '/auth/login',
+            icon: Bell
+        },
         {
             name: 'Profile',
             to: isLoggedIn ? '/profile' : '/auth/login',
@@ -36,7 +37,7 @@ const Bottombar = () => {
     ];
 
     return (
-        <nav className="fixed bottom-0 left-0 right-0 z-60 bg-white dark:bg-zinc-950 border-t md:hidden h-16 px-4">
+        <nav className="fixed w-full bottom-0 left-0 right-0 z-60 bg-white dark:bg-zinc-950 border-t md:hidden h-16 px-4">
             <div className="flex items-center justify-around h-full">
                 {navItems.map((item, idx) => {
                     const isActive = pathname === item.to;

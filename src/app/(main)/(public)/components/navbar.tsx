@@ -15,7 +15,6 @@ import {
     User,
     X
 } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import {
@@ -27,6 +26,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useCurrentUser } from "@/hooks/auth/use-current-user";
+import CustomUserAvatar from '@/components/user-avatar'
 
 const STYLES = {
     text: {
@@ -57,23 +57,14 @@ const Navbar = () => {
 
     const navItems = [
         { name: 'Feed', to: '/feed', icon: Layers2 },
+        { name: 'Discover', to: "/discover", icon: User },
+
         ...(!isLoggedIn ? [
             { name: 'Create Profile', to: '/auth/signup', icon: UserPlus },
             { name: 'Login', to: '/auth/login', icon: LogIn }
         ] : [
-            { name: 'Profile', to: `/profile/${userData?._id}`, icon: User }
         ])
     ];
-
-    const UserAvatar = ({ size = "size-10" }: { size?: string }) => (
-        <Avatar className={cn(size, "shrink-0 ring-2 ring-purple-400/20", STYLES.transition, "group-hover:ring-purple-400/50")}>
-            <AvatarImage src={userData?.profileImage} />
-            <AvatarFallback className={cn(STYLES.gradient.primary, STYLES.text.primary)}>
-                {userData?.name?.charAt(0) || "U"}
-            </AvatarFallback>
-        </Avatar>
-    );
-
     return (
         <div className="sticky top-8 z-50">
             <nav className={cn(
@@ -87,9 +78,9 @@ const Navbar = () => {
                     <Image
                         src={logo}
                         alt="logo"
-                        className={cn("size-12 md:size-16 mt-1 invert", STYLES.transition, "group-hover:scale-110 group-hover:rotate-12")}
+                        className={cn("size-12 md:size-16 mt-3 invert", STYLES.transition, "group-hover:scale-110 group-hover:rotate-12")}
                     />
-                    <span className={`${STYLES.text.primary} text-xl md:text-2xl font-bold ml-2`}>
+                    <span className={`${STYLES.text.primary} text-xl md:text-2xl font-bold`}>
                         Inquire
                     </span>
                 </Link>
@@ -103,7 +94,7 @@ const Navbar = () => {
                                 key={idx}
                                 href={item.to}
                                 className={cn(
-                                    "relative px-5 py-2 rounded-full font-medium",
+                                    "relative px-4 py-2 rounded-full font-medium",
                                     STYLES.transition,
                                     isActive
                                         ? `${STYLES.text.primary} border-transparent`
@@ -120,14 +111,14 @@ const Navbar = () => {
 
                     {isLoggedIn && (
                         <>
-                            <Separator orientation="vertical" className={cn("h-6 mx-2", STYLES.border)} />
+                            <Separator orientation="vertical" className={cn("h-6", STYLES.border)} />
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button
                                         variant="ghost"
-                                        className={cn("flex items-center gap-2 px-4 py-2 rounded-full", STYLES.hover, STYLES.transition)}
+                                        className={cn("flex items-center px-4  py-2 rounded-full", STYLES.hover, STYLES.transition)}
                                     >
-                                        <UserAvatar size="size-8" />
+                                        <CustomUserAvatar src={userData?.profileImage} name={userData?.name} size="sm" className=" border-none" />
                                         <span className={cn("text-sm font-medium", STYLES.text.secondary, "hover:text-white", STYLES.transition)}>
                                             {userData?.name}
                                         </span>
@@ -141,7 +132,7 @@ const Navbar = () => {
                                     <DropdownMenuSeparator className={STYLES.border} />
                                     <DropdownMenuItem asChild>
                                         <Link
-                                            href={`/profile/${userData?._id}`}
+                                            href={`/profile`}
                                             className={cn("cursor-pointer", STYLES.text.secondary, "hover:text-white focus:text-white focus:bg-white/5")}
                                         >
                                             <User className="mr-2 h-4 w-4" />
@@ -205,11 +196,11 @@ const Navbar = () => {
                             <>
                                 <Separator className={cn("my-2", STYLES.border)} />
                                 <Link
-                                    href={`/profile/${userData?._id}`}
+                                    href={`/profile`}
                                     onClick={() => setIsOpen(false)}
-                                    className="flex items-center gap-3 px-4 py-3 hover:bg-white/5 rounded-xl transition-colors"
+                                    className="flex items-center gap-3 px-2 py-3 hover:bg-white/5 rounded-xl transition-colors"
                                 >
-                                    <UserAvatar />
+                                    <CustomUserAvatar />
                                     <div>
                                         <p className="text-sm font-semibold text-white">{userData?.name}</p>
                                         <p className="text-xs text-gray-500">View Profile</p>
@@ -218,7 +209,7 @@ const Navbar = () => {
 
                                 <Button
                                     variant="ghost"
-                                    className="text-red-400 hover:text-red-300 hover:bg-red-500/10 px-4 py-3 rounded-xl text-sm font-medium w-full justify-start gap-3 transition-colors"
+                                    className="text-red-400 hover:text-red-300 hover:bg-red-500/10 px-5 py-3 rounded-xl text-sm font-medium w-full justify-start gap-3 transition-colors"
                                     onClick={() => logout()}
                                 >
                                     <LogOut size={18} />

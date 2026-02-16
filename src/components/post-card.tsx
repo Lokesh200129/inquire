@@ -53,9 +53,9 @@ const PostCard = ({ post, isProfile }: CardProp) => {
   };
 
   return (
-    <Card className="w-full shadow-none border-none rounded-xl py-6 px-4 mt-4 bg-card">
+    <Card className="w-full shadow-none border-none rounded-xl py-6 px-4 mt-4 bg-card ">
       {/* 1. Header: User Details */}
-      <CardHeader className="flex flex-row items-center justify-between p-0 mb-4 space-y-0 capitalize">
+      <CardHeader className="flex flex-row items-center justify-between p-0 mb-4 space-y-0">
         <div className="flex items-center gap-3">
           <CustomUserAvatar src={post?.author?.profileImage} name={post?.author?.name} size="md" />
           <div className="flex flex-col">
@@ -64,7 +64,7 @@ const PostCard = ({ post, isProfile }: CardProp) => {
                 {post.author.name}
               </span>
               <span className="text-muted-foreground text-[10px]">•</span>
-              <span className="text-muted-foreground text-xs">
+              <span className="text-muted-foreground text-[10px]">
                 {formatDistanceToNow(new Date(post.createdAt))} ago
               </span>
             </div>
@@ -93,14 +93,14 @@ const PostCard = ({ post, isProfile }: CardProp) => {
       </CardHeader>
 
       <CardContent className="p-0 space-y-3">
-        <h2 className="text-xl font-bold leading-tight text-foreground px-0 capitalize group-hover/link:text-blue-600 transition-colors mb-2">
+        <h2 className="text-xl font-bold leading-tight text-foreground px-0  group-hover/link:text-blue-600 transition-colors mb-2">
           {post.title}
         </h2>
 
         <div className="relative overflow-hidden">
           <div
             className={cn(
-              "prose prose-sm max-w-none text-sm leading-relaxed transition-all duration-500 ease-in-out ", "whitespace-pre-wrap",
+              "prose prose-sm max-w-none text-lg leading-relaxed transition-all duration-500 ease-in-out ", "whitespace-pre-wrap",
               !isExpanded ? "max-h-24 overflow-hidden" : "max-h-auto"
             )}
             style={{

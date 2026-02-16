@@ -12,9 +12,10 @@ export async function proxy(req: NextRequest) {
         return NextResponse.redirect(new URL('/auth/login', req.url));
     }
 }
-// 5. Specify which routes should be protected
+
 export const config = {
     matcher: [
-        '/profile/:path*',
+        '/profile',
+        '/notification',
     ],
 };

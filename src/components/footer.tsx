@@ -52,11 +52,8 @@ export default function Footer() {
     const handleSubscribe = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
-
-        // Simulating API call
-        toast.success("Thanks for subscribing! We'll keep you updated with the best questions and answers.");
+        toast.success("Thanks for subscribing! We'll keep you updated");
         setEmail("");
-
         setTimeout(() => setIsSubmitting(false), 2000);
     };
 

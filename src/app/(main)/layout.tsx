@@ -1,10 +1,7 @@
 
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Montserrat } from "next/font/google";
 import "./globals.css";
-import ClientProvider from "@/components/client-wrapper";
-import { Toaster } from 'sonner'
-import PostFormModal from "@/components/post-form-modal";
 import { Providers } from "@/components/provider";
 
 const geistSans = Geist({
@@ -16,6 +13,13 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+const montserrat = Montserrat({
+  variable: "--font-montserrat",
+  subsets: ["latin"],
+  weight: "400",
+  display: 'swap'
+});
+
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://inquire.com"),
@@ -32,7 +36,7 @@ export const metadata: Metadata = {
     "share knowledge",
   ],
   icons: {
-    icon: "/favicon.ico",
+    icon: "/logo.png",
   },
   openGraph: {
     type: "website",
@@ -58,16 +62,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased `}
+        className={`${montserrat.variable} ${geistSans.variable} ${geistMono.variable} antialiased `}
       >
         <Providers>
-          <Toaster richColors position="top-center" duration={2000} />
-          <ClientProvider>
-            <main className="w-full z-10">
-              {children}
-            </main>
-            <PostFormModal />
-          </ClientProvider>
+          <main className="w-full min-h-screen z-10">
+            {children}
+          </main>
         </Providers>
       </body>
     </html>

@@ -1,14 +1,14 @@
 "use client";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { useInfiniteQuestions } from "@/hooks/useInfiniteQuestions";
-import { MessageSquare } from "lucide-react";
+import { useInfiniteQuestions } from "@/hooks/use-infinite-questions";
 import GlobalLoader from "@/components/global-loader";
-
+import Link from "next/link";
 interface TrendingItem {
     tag: string;
     post: TPost;
 }
+import PostImage from "./post-image";
 
 export default function TrendingTopics() {
     const { data, isLoading } = useInfiniteQuestions();
@@ -32,7 +32,6 @@ export default function TrendingTopics() {
             })
             .filter((item): item is TrendingItem => item !== null);
     }
-
     if (isLoading) return <GlobalLoader />
 
     const hasValidImage = (post: TPost): boolean => {
@@ -66,14 +65,15 @@ export default function TrendingTopics() {
             </div>
 
             {/* Trending Cards: 1 post per category */}
-            <div className="space-y-4">
+            <div className="space-y-4 overflow-auto">
                 {trendingContent.map(({ tag, post }) => (
-                    <div
+                    <Link
+                        href={`/feed/${post._id}`}
                         key={tag}
-                        className="group flex items-center gap-3 p-2 rounded-xl bg-white hover:bg-muted/50 transition-colors border border-transparent hover:border-border"
+                        className="group flex gap-3 p-2 rounded-xl bg-white hover:bg-muted/50 transition-colors border border-transparent hover:border-border"
                     >
                         {/* Image on the Left */}
-                        <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg border bg-muted">
+                        <div className="relative size-30 shrink-0 overflow-hidden rounded-lg border bg-muted">
                             {hasValidImage(post) && post.questionImage ? (
                                 <Image
                                     src={post?.questionImage[0]}
@@ -81,26 +81,27 @@ export default function TrendingTopics() {
                                     fill
                                     className="object-cover transition-transform group-hover:scale-110"
                                 />
-                            ) : (
-                                <div className="flex h-full w-full items-center justify-center bg-muted/50 rounded-lg border border-dashed">
-                                    <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                                        <MessageSquare className="size-6 opacity-20" />
-                                        <span className="text-[10px] font-medium uppercase tracking-wider opacity-40">
-                                            No Image
-                                        </span>
-                                    </div>
-                                </div>
-                            )}
+                            ) : <PostImage post={post} className="size-30" />}
                         </div>
 
                         {/* Title on the Right */}
-                        <div className="min-w-0 flex-1">
-                            <p className="text-md font-bold text-primary uppercase tracking-wider">#{tag}</p>
-                            <h4 className="text-sm font-semibold leading-snug line-clamp-2 group-hover:text-primary transition-colors">
-                                {post.title}
-                            </h4>
+                        <div className=" flex-1 ">
+                            <div className="flex justify-start flex-col gap-2  ">
+                                <Button
+                                    key={tag}
+                                    variant="secondary"
+                                    size="sm"
+                                    className="bg-primary/5  border-none hover:bg-primary/10 transition-colors rounded-full px-3 text-[11px]  w-fit"
+                                >
+                                    #{tag}
+                                </Button>
+                                <h2 className="uppercase font-semibold line-clamp-2 group-hover:text-primary transition-colors">
+                                    {post.title}
+                                </h2>
+                                <div className="line-clamp-2 capitalize text-sm" dangerouslySetInnerHTML={{ __html: post.content }} />
+                            </div>
                         </div>
-                    </div>
+                    </Link>
                 ))}
             </div>
         </div>

@@ -4,9 +4,6 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MessageSquare, ShieldCheck, Zap } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { useCurrentUser } from "@/hooks/auth/use-current-user";
 
 const features = [
     {
@@ -27,18 +24,6 @@ const features = [
 ];
 
 export default function LandingPage() {
-    const router = useRouter();
-    const { data: user, isLoading } = useCurrentUser();
-    const isAuthenticated = !!user;
-
-    useEffect(() => {
-        if (!isLoading && isAuthenticated) {
-            router.replace("/feed");
-        }
-    }, [isAuthenticated, isLoading, router]);
-
-    if (isLoading || isAuthenticated) return null;
-
     return (
         <>
             <section className="flex flex-col items-center justify-center min-h-[70vh] px-4 pt-20">
@@ -53,7 +38,7 @@ export default function LandingPage() {
                 </p>
                 <div className="mt-10 flex flex-col sm:flex-row gap-4">
                     <Button size="lg" className="rounded-full px-8 h-12 text-md" asChild>
-                        <Link href="/auth/signup">Start Inquiring</Link>
+                        <Link href="/feed">Start Inquiring</Link>
                     </Button>
                     <Button size="lg" variant="outline" className="rounded-full px-8 h-12 text-md" asChild>
                         <Link href="/discover">Explore Discussions</Link>

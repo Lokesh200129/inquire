@@ -1,7 +1,13 @@
-"use client";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { MessageSquare, ThumbsUp, UserPlus, Bell, Bookmark, Award } from "lucide-react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Notifications",
+    description: "Stay updated with the latest interactions, replies, and activity on your profile and posts.",
+};
 
 const NOTIFICATIONS = [
     {

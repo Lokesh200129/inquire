@@ -289,5 +289,9 @@ body {
 
 .prose p:empty::before {
   content: '\200b';
-  
+
+}
+
+body {
+  font-family: var(--font-montserrat);
 }
