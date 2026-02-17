@@ -12,7 +12,7 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
         <div className="w-full bg-accent">
             <div className="flex mx-auto container w-full ">
                 {/* Fixed Sidebar */}
-                <aside className="w-64 bg-card hidden md:block sticky top-0 h-screen">
+                <aside className="w-64 bg-accent hidden md:block sticky top-0 h-screen">
                     <Sidebar />
                 </aside>
 
