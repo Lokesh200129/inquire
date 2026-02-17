@@ -19,7 +19,7 @@ import { formatDistanceToNow } from "date-fns";
 import { useDeletePost } from '@/hooks/use-delete-post'
 import { cn } from "@/lib/utils";
 import PostImageCarousel from '@/components/carousel'
-
+import { useVote } from "@/hooks/use-vote";
 interface CardProp {
   post: TPost,
   isProfile?: boolean
@@ -28,7 +28,11 @@ interface CardProp {
 const PostCard = ({ post, isProfile }: CardProp) => {
   const [isCarouselOpen, setIsCarouselOpen] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const { mutate: handleVote } = useVote();
 
+  const onVoteClick = (type: "UP" | "DOWN") => {
+    handleVote({ postId: post._id!, voteType: type });
+  };
   const openCarousel = (index: number) => {
     setSelectedImageIndex(index);
     setIsCarouselOpen(true);
@@ -37,7 +41,7 @@ const PostCard = ({ post, isProfile }: CardProp) => {
   const { mutate: deletePost, isPending } = useDeletePost();
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const isLongContent = post.content.length > 200
+  const isLongContent = post.content.length > 200;
 
   const handleToggle = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -51,7 +55,7 @@ const PostCard = ({ post, isProfile }: CardProp) => {
       deletePost(post._id);
     }
   };
-
+  // console.log(post)
   return (
     <Card className="w-full shadow-none border-none rounded-xl py-6 px-4 mt-4 bg-card ">
       {/* 1. Header: User Details */}
@@ -128,10 +132,10 @@ const PostCard = ({ post, isProfile }: CardProp) => {
           </button>
         )}
 
-        {post.questionImage && post.questionImage?.length > 0 && post.questionImage?.some((img: string) => img && img.trim() !== '') && (
+        {post.questionImage && post.questionImage?.length > 0 && post.questionImage[0] !== "" && (
           <div className={cn(
-            "relative w-full rounded-xl overflow-hidden border bg-muted transition-all duration-500",
-            isExpanded ? "aspect-auto max-h-150" : "aspect-video"
+            "relative w-full rounded-xl overflow-hidden border bg-muted transition-all duration-500 aspect-video",
+
           )}>
 
             <div className={cn(
@@ -234,13 +238,39 @@ const PostCard = ({ post, isProfile }: CardProp) => {
       <CardFooter className="p-0 flex items-center justify-between">
         <div className="flex items-center gap-1">
           <div className="flex items-center bg-muted/50 rounded-full border">
-            <Button variant="ghost" size="sm" className="rounded-l-full h-8 px-3 gap-1 hover:bg-primary/10 hover:text-primary group">
-              <ArrowBigUp className="size-5 group-active:scale-125 transition-transform" />
-              <span className="text-xs font-semibold">{post.upvotes.length}</span>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              className={cn(
+                "rounded-l-full h-8 px-3 gap-1 group",
+                post.userVoteStatus === 'UP' && "text-orange-600 bg-orange-50 hover:bg-orange-100"
+              )}
+              onClick={() => onVoteClick('UP')}
+            >
+              <ArrowBigUp className={cn(
+                "size-5 transition-transform group-active:scale-125",
+                post.userVoteStatus === 'UP' && "fill-orange-600"
+              )} />
+              <span className="text-xs font-semibold">{post.upvotes}</span>
             </Button>
+
             <div className="w-px h-4 bg-border" />
-            <Button variant="ghost" size="sm" className="rounded-r-full h-8 px-2 hover:bg-destructive/10 hover:text-destructive group">
-              <ArrowBigDown className="size-5 group-active:scale-125 transition-transform" />
+
+            <Button
+              variant="ghost"
+              size="sm"
+              className={cn(
+                "rounded-r-full h-8 px-2 group",
+                post.userVoteStatus === 'DOWN' && "text-blue-600 bg-blue-50 hover:bg-blue-100"
+              )}
+              onClick={() => onVoteClick('DOWN')}
+            >
+              <ArrowBigDown className={cn(
+                "size-5 transition-transform group-active:scale-125",
+                post.userVoteStatus === 'DOWN' && "fill-blue-600"
+              )} />
+              {/* Usually downvotes are shown as a total or just the icon */}
             </Button>
           </div>
 

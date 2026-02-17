@@ -20,11 +20,15 @@ import { Badge } from "@/components/ui/badge";
 import CustomUserAvatar from "@/components/user-avatar";
 import { useSingleQuestion } from "@/hooks/use-single-question";
 import GlobalLoader from "@/components/global-loader";
-
+import { useVote } from "@/hooks/use-vote";
 export default function QuestionDetailView() {
     const { id } = useParams();
-    // const { data: post, isLoading, error } = useSingleQuestion(id as string);
     const { data: post, isLoading, } = useSingleQuestion(id as string) as { data: TPost, isLoading: boolean };
+    const { mutate: handleVote } = useVote();
+
+    const onVoteClick = (type: "UP" | "DOWN") => {
+        handleVote({ postId: post._id!, voteType: type });
+    };
 
     const [isGalleryOpen, setIsGalleryOpen] = useState(false);
     const [activeIndex, setActiveIndex] = useState(0);
@@ -36,7 +40,7 @@ export default function QuestionDetailView() {
 
     if (isLoading) return <GlobalLoader />;
     if (!post) return <div className="p-10 text-center">Question not found.</div>;
-    console.log(post)
+  
     return (
         <div className="flex-1 max-w-3xl mx-auto w-full p-4 space-y-6">
             {/* 1. Header Navigation */}
@@ -131,13 +135,38 @@ export default function QuestionDetailView() {
             <div className="flex items-center justify-between border-y py-4 sticky bottom-0 bg-neutral-100">
                 <div className="flex items-center gap-4">
                     <div className="flex items-center bg-muted/50 rounded-full border p-1">
-                        <Button variant="ghost" size="sm" className="rounded-full h-9 px-4 gap-2 hover:bg-primary/10">
-                            <ArrowBigUp className="size-6" />
-                            <span className="font-bold">{post.upvotes.length}</span>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className={cn(
+                                "rounded-l-full h-8 px-3 gap-1 group",
+                                post.userVoteStatus === 'UP' && "text-orange-600 bg-orange-50 hover:bg-orange-100"
+                            )}
+                            onClick={() => onVoteClick('UP')}
+                        >
+                            <ArrowBigUp className={cn(
+                                "size-5 transition-transform group-active:scale-125",
+                                post.userVoteStatus === 'UP' && "fill-orange-600"
+                            )} />
+                            <span className="text-xs font-semibold">{post.upvotes}</span>
                         </Button>
-                        <div className="w-px h-5 bg-border mx-1" />
-                        <Button variant="ghost" size="sm" className="rounded-full h-9 px-4 hover:bg-destructive/10">
-                            <ArrowBigDown className="size-6" />
+
+                        <div className="w-px h-4 bg-border" />
+
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className={cn(
+                                "rounded-r-full h-8 px-2 group",
+                                post.userVoteStatus === 'DOWN' && "text-blue-600 bg-blue-50 hover:bg-blue-100"
+                            )}
+                            onClick={() => onVoteClick('DOWN')}
+                        >
+                            <ArrowBigDown className={cn(
+                                "size-5 transition-transform group-active:scale-125",
+                                post.userVoteStatus === 'DOWN' && "fill-blue-600"
+                            )} />
+                            {/* Usually downvotes are shown as a total or just the icon */}
                         </Button>
                     </div>
                     <Button variant="ghost" className="gap-2 text-muted-foreground rounded-full h-11 px-6">

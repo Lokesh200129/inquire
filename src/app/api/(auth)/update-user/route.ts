@@ -46,7 +46,7 @@ export const PATCH = tryCatchWrapper(async (req: NextRequest) => {
         occupation,
         location,
         bio,
-        profileImage: imageUrl || "https://res.cloudinary.com/db6wium4n/image/upload/v1770358944/avatar_xibibu.png"
+        profileImage: imageUrl
     };
     const updatedUser = await User.findByIdAndUpdate(
         _id,

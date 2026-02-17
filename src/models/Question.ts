@@ -10,7 +10,7 @@ const QuestionSchema = new Schema({
         type: String,
         required: true,
         trim: true,
-        index: 'text' // For searching questions
+        index: 'text'
     },
     content: {
         type: String
@@ -24,9 +24,11 @@ const QuestionSchema = new Schema({
         default: 0
     },
     tags: [],
-    upvotes: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-    downvotes: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    upvotes: { type: Number, default: 0 },
+    downvotes: { type: Number, default: 0 },
 }, { timestamps: true });
+
+QuestionSchema.index({ 'upvotes': -1 });
 
 const Question = models.Question || model('Question', QuestionSchema);
 

@@ -26,30 +26,6 @@ export const usePostForm = () => {
         setPostModal(false);
     };
 
-    // const onSubmit = async (data: TPostForm) => {
-    //     const formData = new FormData();
-    //     formData.append("title", data.title);
-    //     formData.append("content", data.content);
-
-    //     formData.append('_id', user?._id || "");
-
-    //     if (data.tags) {
-    //         formData.append("tags", data.tags);
-    //     }
-    //     console.log(data.questionImage)
-
-    //     if (data.questionImage?.[0]) {
-    //         formData.append("questionImage", data.questionImage[0]);
-    //     }
-
-    //     try {
-    //         await createPost(formData);
-    //         handleCancel();
-    //     } catch (error) {
-    //         console.error("Form submission error:", error);
-    //     }
-    // };
-
     const onSubmit = async (data: TPostForm) => {
         const formData = new FormData();
         formData.append("title", data.title);

@@ -19,7 +19,6 @@ export const useLogin = () => {
         onSuccess: (loggendInUser) => {
             toast.success(`Welcome back!`);
             router.replace('/feed')
-            console.log(loggendInUser)
             queryClient.setQueryData<TUser>(["current-user"], (prevUser) => {
                 if (!prevUser) return prevUser;
                 return {

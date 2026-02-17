@@ -70,8 +70,8 @@ export default function PostImageCarousel({
 
                 {images.length > 1 && (
                     <>
-                        <CarouselPrevious className="left-2 opacity-0 group-hover:opacity-100 transition-opacity bg-white/10 hover:bg-white/20 text-white border-white/20" />
-                        <CarouselNext className="right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-white/10 hover:bg-white/20 text-white border-white/20" />
+                        <CarouselPrevious className="left-2  bg-white/10 hover:bg-white/20 text-white border-white/20" />
+                        <CarouselNext className="right-2 bg-white/10 hover:bg-white/20 text-white border-white/20" />
                     </>
                 )}
             </Carousel>

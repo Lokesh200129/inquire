@@ -20,6 +20,7 @@ type TPost = {
     downvotes: string[];
     answerCount: number;
     createdAt: Date;
+    userVoteStatus?: string
 }
 
 
@@ -58,4 +59,16 @@ interface TUserQuestionsReturn {
     fetchNextPage: () => void;
     error: Error | null;
     observerTarget: React.RefObject<HTMLDivElement | null>;
+}
+
+interface TVoteType { vote: 'UP' | 'DOWN' }
+
+interface TVoteRequestBody {
+    postId: string;
+    voteType: VoteType;
+}
+
+interface TMyVoteResponse {
+    postId: string;
+    voteType: VoteType;
 }
