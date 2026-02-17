@@ -20,6 +20,7 @@ import { useDeletePost } from '@/hooks/use-delete-post'
 import { cn } from "@/lib/utils";
 import PostImageCarousel from '@/components/carousel'
 import { useVote } from "@/hooks/use-vote";
+import AuthWrapper from "./check-authenticate";
 interface CardProp {
   post: TPost,
   isProfile?: boolean
@@ -29,6 +30,7 @@ const PostCard = ({ post, isProfile }: CardProp) => {
   const [isCarouselOpen, setIsCarouselOpen] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const { mutate: handleVote } = useVote();
+
 
   const onVoteClick = (type: "UP" | "DOWN") => {
     handleVote({ postId: post._id!, voteType: type });
@@ -237,43 +239,44 @@ const PostCard = ({ post, isProfile }: CardProp) => {
       {/* 3. Footer: Interactions */}
       <CardFooter className="p-0 flex items-center justify-between">
         <div className="flex items-center gap-1">
-          <div className="flex items-center bg-muted/50 rounded-full border">
+          <AuthWrapper>
+            <div className="flex items-center bg-muted/50 rounded-full border">
 
-            <Button
-              variant="ghost"
-              size="sm"
-              className={cn(
-                "rounded-l-full h-8 px-3 gap-1 group",
-                post.userVoteStatus === 'UP' && "text-orange-600 bg-orange-50 hover:bg-orange-100"
-              )}
-              onClick={() => onVoteClick('UP')}
-            >
-              <ArrowBigUp className={cn(
-                "size-5 transition-transform group-active:scale-125",
-                post.userVoteStatus === 'UP' && "fill-orange-600"
-              )} />
-              <span className="text-xs font-semibold">{post.upvotes}</span>
-            </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className={cn(
+                  "rounded-l-full h-8 px-3 gap-1 group",
+                  post.userVoteStatus === 'UP' && "text-orange-600 bg-orange-50 hover:bg-orange-100"
+                )}
+                onClick={() => onVoteClick('UP')}
+              >
+                <ArrowBigUp className={cn(
+                  "size-5 transition-transform group-active:scale-125",
+                  post.userVoteStatus === 'UP' && "fill-orange-600"
+                )} />
+                <span className="text-xs font-semibold">{post.upvotes}</span>
+              </Button>
 
-            <div className="w-px h-4 bg-border" />
+              <div className="w-px h-4 bg-border" />
 
-            <Button
-              variant="ghost"
-              size="sm"
-              className={cn(
-                "rounded-r-full h-8 px-2 group",
-                post.userVoteStatus === 'DOWN' && "text-blue-600 bg-blue-50 hover:bg-blue-100"
-              )}
-              onClick={() => onVoteClick('DOWN')}
-            >
-              <ArrowBigDown className={cn(
-                "size-5 transition-transform group-active:scale-125",
-                post.userVoteStatus === 'DOWN' && "fill-blue-600"
-              )} />
-              {/* Usually downvotes are shown as a total or just the icon */}
-            </Button>
-          </div>
-
+              <Button
+                variant="ghost"
+                size="sm"
+                className={cn(
+                  "rounded-r-full h-8 px-2 group",
+                  post.userVoteStatus === 'DOWN' && "text-blue-600 bg-blue-50 hover:bg-blue-100"
+                )}
+                onClick={() => onVoteClick('DOWN')}
+              >
+                <ArrowBigDown className={cn(
+                  "size-5 transition-transform group-active:scale-125",
+                  post.userVoteStatus === 'DOWN' && "fill-blue-600"
+                )} />
+                {/* Usually downvotes are shown as a total or just the icon */}
+              </Button>
+            </div>
+          </AuthWrapper>
           <Button variant="ghost" size="sm" className="rounded-full h-8 gap-2 text-muted-foreground">
             <MessageSquare className="size-4" />
             <span className="text-xs font-medium">{post.answerCount}</span>
