@@ -61,6 +61,10 @@ export const GET = tryCatchWrapper(async (req: NextRequest) => {
         .skip(skip)
         .limit(limit)
         .populate("author", "name profileImage occupation location")
+        .populate({
+            path: "comments.author",
+            select: "name profileImage"
+        })
         .select("-__v");
 
     const total = await Question.countDocuments(query);

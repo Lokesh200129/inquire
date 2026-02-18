@@ -31,7 +31,7 @@ const Page = () => {
         setIsEditing(false);
     };
     return (
-        <main className="mx-auto mt-3 py-4 min-h-screen">
+        <main className="mx-auto mt-3">
             <MobileForm isOpen={isEditing} onClose={handleClose} />
             <div className="flex flex-col lg:flex-row gap-10 relative items-start">
                 <div className="flex-1 w-full space-y-8">
@@ -47,7 +47,6 @@ const Page = () => {
                                         <p className="text-muted-foreground font-medium">{user?.occupation || "Member"}</p>
                                     </div>
 
-                                    {/* Always show Edit button because this is strictly the user's own profile */}
                                     <div className="md:hidden">
                                         <Button
                                             variant={isEditing ? "default" : "outline"}
@@ -89,7 +88,7 @@ const Page = () => {
 
                         {data?.pages && data.pages[0]?.question?.length > 0 ? (
                             data.pages.map((page, pageIndex) => (
-                                <div key={pageIndex} className="w-full grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div key={pageIndex} className="w-full grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                                     {page?.question?.map((item, idx: number) => (
                                         <div key={item._id || `${pageIndex}-${idx}`}>
                                             <PostCard post={item} isProfile={true} />

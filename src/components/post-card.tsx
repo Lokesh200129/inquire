@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 import PostImageCarousel from '@/components/carousel'
 import { useVote } from "@/hooks/use-vote";
 import AuthWrapper from "./check-authenticate";
+import CommentSection from "./comment";
 interface CardProp {
   post: TPost,
   isProfile?: boolean
@@ -30,7 +31,11 @@ const PostCard = ({ post, isProfile }: CardProp) => {
   const [isCarouselOpen, setIsCarouselOpen] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const { mutate: handleVote } = useVote();
+  const [isOpen, setIsOpen] = useState(false);
 
+  const toggleComment = () => {
+    setIsOpen(!isOpen)
+  }
 
   const onVoteClick = (type: "UP" | "DOWN") => {
     handleVote({ postId: post._id!, voteType: type });
@@ -57,7 +62,8 @@ const PostCard = ({ post, isProfile }: CardProp) => {
       deletePost(post._id);
     }
   };
-  // console.log(post)
+  console.log(post)
+
   return (
     <Card className="w-full shadow-none border-none rounded-xl py-6 px-4 mt-4 bg-card ">
       {/* 1. Header: User Details */}
@@ -241,7 +247,6 @@ const PostCard = ({ post, isProfile }: CardProp) => {
         <div className="flex items-center gap-1">
           <AuthWrapper>
             <div className="flex items-center bg-muted/50 rounded-full border">
-
               <Button
                 variant="ghost"
                 size="sm"
@@ -257,9 +262,7 @@ const PostCard = ({ post, isProfile }: CardProp) => {
                 )} />
                 <span className="text-xs font-semibold">{post.upvotes}</span>
               </Button>
-
               <div className="w-px h-4 bg-border" />
-
               <Button
                 variant="ghost"
                 size="sm"
@@ -273,13 +276,13 @@ const PostCard = ({ post, isProfile }: CardProp) => {
                   "size-5 transition-transform group-active:scale-125",
                   post.userVoteStatus === 'DOWN' && "fill-blue-600"
                 )} />
-                {/* Usually downvotes are shown as a total or just the icon */}
               </Button>
             </div>
           </AuthWrapper>
-          <Button variant="ghost" size="sm" className="rounded-full h-8 gap-2 text-muted-foreground">
+          <Button variant="ghost" size="sm" className="rounded-full h-8 gap-2 text-muted-foreground" onClick={toggleComment}>
             <MessageSquare className="size-4" />
             <span className="text-xs font-medium">{post.answerCount}</span>
+            <p>{post.comments?.length} Comments</p>
           </Button>
         </div>
 
@@ -287,6 +290,9 @@ const PostCard = ({ post, isProfile }: CardProp) => {
           <Share2 className="size-4" />
         </Button>
       </CardFooter>
+      <CommentSection questionId={post._id}
+        initialComments={post?.comments}
+        isOpen={isOpen} />
     </Card>
   );
 };

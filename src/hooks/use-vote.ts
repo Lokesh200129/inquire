@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "sonner";
+import parseError from "@/lib/parse-error";
 
 interface VotePayload {
     postId: string;
@@ -66,7 +67,7 @@ export const useVote = () => {
 
         onError: (err, newVote, context) => {
             queryClient.setQueryData(["questions"], context?.previousQuestions);
-            toast.error("Failed to record vote. Please try again.");
+            toast.error(parseError(err));
         },
         onSettled: () => {
             queryClient.invalidateQueries({ queryKey: ["questions"] });

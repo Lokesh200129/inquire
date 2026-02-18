@@ -20,7 +20,8 @@ type TPost = {
     downvotes: string[];
     answerCount: number;
     createdAt: Date;
-    userVoteStatus?: string
+    userVoteStatus?: string,
+    comments: TCommentResponse[]
 }
 
 
@@ -71,4 +72,21 @@ interface TVoteRequestBody {
 interface TMyVoteResponse {
     postId: string;
     voteType: VoteType;
+}
+
+interface TCommentRequest {
+    questionId: string;
+    authorId: string;
+    content: string;
+}
+
+interface TCommentResponse {
+    _id: string;
+    content: string;
+    author: {
+        _id: string;
+        name: string;
+        image?: string;
+    };
+    createdAt: string;
 }

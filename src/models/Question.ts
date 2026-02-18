@@ -26,6 +26,22 @@ const QuestionSchema = new Schema({
     tags: [],
     upvotes: { type: Number, default: 0 },
     downvotes: { type: Number, default: 0 },
+    comments: [
+        {
+            author: {
+                type: Schema.Types.ObjectId,
+                ref: 'User'
+            },
+            content: {
+                type: String,
+                required: true
+            },
+            createdAt: {
+                type: Date,
+                default: Date.now
+            }
+        }
+    ],
 }, { timestamps: true });
 
 QuestionSchema.index({ 'upvotes': -1 });
